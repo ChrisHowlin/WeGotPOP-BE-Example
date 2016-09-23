@@ -22,7 +22,7 @@ Gender criteria
 * **gender_wgt** - indication of the relative weight of artist gender for relevancy considerations
 
 Filtering and relevance strategy
-* **relevance** - A value in 'basic', 'relaxed' or 'blended'
+* **relevance** - A value in 'basic', 'relaxed' or 'blended'. Defaults to 'basic'.
 
 ## Assumptions
 
@@ -173,3 +173,19 @@ functions need to be defined, which involves a lot of tweaking to make sure
 that the output is actually relevant. This could be done by eye or, if there
 were enough data, by using a machine learning approach to learn the coefficents
 that give the most relevant distribution of results.
+
+## Examples
+
+artists?age_min=50&age_max=60&age_wgt=1&rate_max=20&rate_wgt=2&loc_lat=51.55587162&loc_lon=0.13083594&loc_rad=20&loc_wgt=3&relevance=basic
+
+* Searches within 50-60 age range, with max rate £20 and within 20 miles of (51.55587162,0.13083594). Only returns exact matches. Within the results artist are ordered by lowest rate and then by distance from location radius (if the rates are equal)
+
+artists?age_min=50&age_max=60&age_wgt=1&rate_max=20&rate_wgt=2&loc_lat=51.55587162&loc_lon=0.13083594&loc_rad=20&loc_wgt=3&relevance=relaxed
+
+* Searches within 50-60 age range, with max rate £20 and within 20 miles of (51.55587162,0.13083594), age weighted before rate before location. Once determining the exact matches append non-exact matches taken from an ordered list which is sorted in order of the specified weights (so age first, then rate, then location).
+
+artists?age_min=50&age_max=60&age_wgt=1&rate_max=20&rate_wgt=2&loc_lat=51.55587162&loc_lon=0.13083594&loc_rad=20&loc_wgt=3&relevance=blended
+
+* Searches within 50-60 age range, with max rate £20 and within 20 miles of (51.55587162,0.13083594), using the blended relevance. Age is most important, followed by rate, followed by location.
+  * In the results, you can see that after all the complete matches have been returned, the age, rate and location criteria are slowly relaxed to include artists which are close to the criteria but don't match exactly. In this case as the location is a low priority, the radius will be expanded by, 3 miles before increasing the rate limit by £1, and 6 miles before increasing the age limits by 1 in either direction. Effectively a 61 year old within the search radius and a 60 year old within 6 miles of the search radius have the same weight.
+  * If the weights were switched such that location was weighted 1 and age was weighted 3, then one mile would be equal to 0.67 years (so we would relax age a lot more quickly than before to focus on keeping the location in the same area 
