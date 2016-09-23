@@ -23,7 +23,7 @@ class RootController(TGController):
         pass
 
     # It may be possible to validate the arguments with @validate here
-    @expose()
+    @expose('json')
     def artists(self, age_min=None, age_max=None, age_wgt=None,
                      loc_lat=None, loc_lon=None, loc_rad=None, loc_wgt=None,
                      rate_max=None, rate_wgt=None,
